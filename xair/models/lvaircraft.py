@@ -40,10 +40,10 @@ class LVAircraftEx(xsim.BaseModel):
         self.act_low  = np.array([np.min(range_throttle), np.min(range_elevator)]).astype(dtype)
         self.act_high = np.array([np.max(range_throttle), np.max(range_elevator)]).astype(dtype)
         # observation space
-        self.obs_low, self.obs_high, _ = self.generate_inf_range(6)
+        self.obs_low, self.obs_high = self.generate_inf_range(6)
 
     def __call__(self, action):
-        action = np.clip(action, self.act_low, self.act_high)
+        action = np.clip(action, self.act_low, self.act_high).astype(self.dtype)
         fn = lambda x: x.dot(self._A) + action.dot(self._B)
         dx = xsim.no_time_rungekutta(fn, self.dt, self._x)
         self._x += dx * self.dt
@@ -56,10 +56,10 @@ class LVAircraftEx(xsim.BaseModel):
         return self.get_observation()
 
     def get_observation(self):
-        return self._x
+        return self._x.astype(self.dtype)
 
     def get_state(self):
-        return self._x[self.IX_u:]
+        return self._x[self.IX_u:].astype(self.dtype)
 
     def get_H(self):
         return self._x[self.IX_H]
@@ -88,7 +88,7 @@ class LVAircraftEx(xsim.BaseModel):
             [0, 0, -0.2282, -0.4038,   0,      869],       # w
             [0, 0,  0,       0,        0,        1],       # Theta
             [0, 0, -0.0001, -0.0018,   0,       -0.5518]   # q
-        ])
+        ], dtype=self.dtype)
         B = np.array([
             #dt      de
             [0,      0],        # H
@@ -133,10 +133,10 @@ class LVAircraft(xsim.BaseModel):
         self._act_low  = np.array([np.min(range_throttle), np.min(range_elevator)])
         self._act_high = np.array([np.max(range_throttle), np.max(range_elevator)])
         # observation space
-        self._obs_low, self._obs_high, _ = self.generate_inf_range(4)
+        self._obs_low, self._obs_high = self.generate_inf_range(4)
 
     def __call__(self, action):
-        action = np.clip(action, self._act_low, self._act_high)
+        action = np.clip(action, self._act_low, self._act_high).astype(self.dtype)
         fn = lambda x: x.dot(self._A) + action.dot(self._B)
         dx = xsim.no_time_rungekutta(fn, self.dt, self._x)
         self._x += dx * self.dt
@@ -146,7 +146,7 @@ class LVAircraft(xsim.BaseModel):
         self._x = np.zeros(4, dtype=self.dtype)
 
     def get_state(self):
-        return self._x
+        return self._x.astype(self.dtype)
 
     def get_u(self):
         return self._x[self.IX_u]
