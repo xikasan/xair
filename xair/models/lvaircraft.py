@@ -17,6 +17,8 @@ class LVAircraftEx(xsim.BaseModel):
     IX_w = 3
     IX_T = 4
     IX_q = 5
+    IX_dt = 0
+    IX_de = 1
 
     def __init__(
             self,
@@ -88,17 +90,26 @@ class LVAircraftEx(xsim.BaseModel):
             [0, 0, -0.0001, -0.0018,   0,       -0.5518]   # q
         ])
         B = np.array([
-            [0,      0],
-            [0,      0],
-            [0.500,  0],
-            [0,     -0.0219],
-            [0,      0],
-            [0,     -1.2394]
+            #dt      de
+            [0,      0],        # H
+            [0,      0],        # U
+            [0.500,  0],        # u
+            [0,     -0.0219],   # w
+            [0,      0],        # Theta
+            [0,     -1.2394]    # q
         ], dtype=self.dtype)
         return A.T, B.T
 
 
 class LVAircraft(xsim.BaseModel):
+
+    # indices
+    IX_u = 0
+    IX_w = 1
+    IX_T = 2
+    IX_q = 3
+    IX_dt = 0
+    IX_de = 1
 
     def __init__(
             self,
@@ -138,28 +149,30 @@ class LVAircraft(xsim.BaseModel):
         return self._x
 
     def get_u(self):
-        return self._x[0]
+        return self._x[self.IX_u]
 
-    def get_v(self):
-        return self._x[1]
+    def get_w(self):
+        return self._x[self.IX_w]
 
     def get_theta(self):
-        return self._x[2]
+        return self._x[self.IX_T]
 
     def get_q(self):
-        return self._x[3]
+        return self._x[self.IX_q]
 
     def construct_matrices(self):
         A = np.array([
-            [-0.0225,  0.0022, -32.3819,   0],
-            [-0.2282, -0.4038,   0,      869],
-            [ 0,       0,        0,        1],
-            [-0.0001, -0.0018,   0,       -0.5518]
+            # u        w         Theta     q
+            [-0.0225,  0.0022, -32.3819,   0],      # u
+            [-0.2282, -0.4038,   0,      869],      # w
+            [ 0,       0,        0,        1],      # Theta
+            [-0.0001, -0.0018,   0,       -0.5518]  # q
         ], dtype=self.dtype)
         B = np.array([
-            [0.500,  0],
-            [0,     -0.0219],
-            [0,      0],
-            [0,     -1.2394]
+            #dt      de
+            [0.500,  0],        # u
+            [0,     -0.0219],   # w
+            [0,      0],        # Theta
+            [0,     -1.2394]    # q
         ], dtype=self.dtype)
         return A.T, B.T
