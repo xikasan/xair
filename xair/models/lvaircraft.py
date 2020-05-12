@@ -144,6 +144,7 @@ class LVAircraft(xsim.BaseModel):
 
     def reset(self):
         self._x = np.zeros(4, dtype=self.dtype)
+        return self.get_state()
 
     def get_state(self):
         return self._x.astype(self.dtype)
