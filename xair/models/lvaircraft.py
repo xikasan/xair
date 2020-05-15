@@ -130,13 +130,13 @@ class LVAircraft(xsim.BaseModel):
         # env params
         # action space
         # U = [throttle, elevator]
-        self._act_low  = np.array([np.min(range_throttle), np.min(range_elevator)])
-        self._act_high = np.array([np.max(range_throttle), np.max(range_elevator)])
+        self.act_low  = np.array([np.min(range_throttle), np.min(range_elevator)])
+        self.act_high = np.array([np.max(range_throttle), np.max(range_elevator)])
         # observation space
-        self._obs_low, self._obs_high = self.generate_inf_range(4)
+        self.obs_low, self.obs_high = self.generate_inf_range(4)
 
     def __call__(self, action):
-        action = np.clip(action, self._act_low, self._act_high).astype(self.dtype)
+        action = np.clip(action, self.act_low, self.act_high).astype(self.dtype)
         fn = lambda x: x.dot(self._A) + action.dot(self._B)
         dx = xsim.no_time_rungekutta(fn, self.dt, self._x)
         self._x += dx * self.dt
