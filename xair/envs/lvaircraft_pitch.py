@@ -149,13 +149,3 @@ class LVAircraftPitchV2(LVAircraftPitchV1):
 
     def get_fail_mode(self):
         return self._model.get_fail()
-
-
-class LVAircraftPitchV3(LVAircraftPitchV2):
-
-    def __init__(
-            self,
-            fail_range_gain=[0.2, 0.7],
-            fail_range_stability=[-0.5, 0.5]
-    ):
-

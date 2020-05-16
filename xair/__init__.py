@@ -16,3 +16,8 @@ register(
     id='LVAircraftPitch-v1',
     entry_point='xair.envs.lvaircraft_pitch:LVAircraftPitchV1'
 )
+# Filtered rectangle command + Fail
+register(
+    id='LVAircraftPitch-v2',
+    entry_point='xair.envs.lvaircraft_pitch:LVAircraftPitchV2'
+)
