@@ -33,7 +33,7 @@ class LVAircraftPitchV0(BaseEnv):
 
         # command generator
         self.range_target = range_target
-        target_width = np.max(range_target) - np.max(range_target) / 2
+        target_width = (np.max(range_target) - np.min(range_target)) / 2
         target_center = np.sum(range_target) / 2
         self._ref = xsim.RectangularCommand(
             period=target_period,
@@ -125,7 +125,7 @@ class LVAircraftPitchV1(LVAircraftPitchV0):
     def reset(self):
         self.current_time = 0.0
         self._model.reset()
-        self._flc.reset(self._ref(self.current_time))
+        self._flc.reset()
         return self.get_observation()
 
     def get_observation(self):
@@ -137,3 +137,25 @@ class LVAircraftPitchV1(LVAircraftPitchV0):
 
     def get_target(self):
         return self._flc.get_full_state().astype(dtype=self.dtype)
+
+
+class LVAircraftPitchV2(LVAircraftPitchV1):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def set_fail_mode(self, mode, val=None):
+        self._model.set_fail(mode, val)
+
+    def get_fail_mode(self):
+        return self._model.get_fail()
+
+
+class LVAircraftPitchV3(LVAircraftPitchV2):
+
+    def __init__(
+            self,
+            fail_range_gain=[0.2, 0.7],
+            fail_range_stability=[-0.5, 0.5]
+    ):
+

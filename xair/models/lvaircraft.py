@@ -3,6 +3,33 @@
 import xsim
 import xtools as xt
 import numpy as np
+import enum
+
+
+class FailMode(enum.Enum):
+
+    NORMAL = enum.auto()
+    STABILITY_LOSS = enum.auto()
+    GAIN_REDUCTION = enum.auto()
+
+    def __init__(self, value):
+        self._val = value - 1
+        self._mag = 1
+
+    def set_val(self, val):
+        self._mag = val
+        return self
+
+    def get_val(self):
+        return self._mag
+
+    @classmethod
+    def get_mode(cls, mode):
+        mode = mode.upper()
+        for key, fail in cls.__members__.items():
+            if key == mode:
+                return fail
+        raise ValueError("Not defined mode name {} is given.".format(mode))
 
 
 class LVAircraftEx(xsim.BaseModel):
@@ -20,6 +47,10 @@ class LVAircraftEx(xsim.BaseModel):
     IX_dt = 0
     IX_de = 1
 
+    _IX_Mw  = [5, 3]
+    _IX_Xde = [3, 1]
+    _IX_Mde = [5, 1]
+
     def __init__(
             self,
             dt,
@@ -32,7 +63,11 @@ class LVAircraftEx(xsim.BaseModel):
 
         # parameters
         self._A, self._B = self._construct_matrices()
+
+        # state
         self._x = np.zeros(6, dtype=self.dtype)
+        # fail
+        self._fail_mode = FailMode.NORMAL
 
         # env params
         # action space
@@ -50,9 +85,11 @@ class LVAircraftEx(xsim.BaseModel):
         return self.get_observation()
 
     def reset(self):
+        self._A, self._B = self._construct_matrices()
         self._x = np.zeros(6, dtype=self.dtype)
         self._x[self.IX_U] = self.U0
         self._x[self.IX_H] = self.H0
+        self._fail_mode = FailMode.NORMAL
         return self.get_observation()
 
     def get_observation(self):
@@ -100,6 +137,23 @@ class LVAircraftEx(xsim.BaseModel):
         ], dtype=self.dtype)
         return A.T, B.T
 
+    def set_fail(self, mode, val=None):
+        if val is not None:
+            mode.set_val(val)
+        self._fail_mode = mode
+        if self._fail_mode == FailMode.NORMAL:
+            return self
+        if self._fail_mode == FailMode.GAIN_REDUCTION:
+            self._B[self._IX_Xde[1], self._IX_Xde[0]] *= self._fail_mode.get_val()
+            self._B[self._IX_Mde[1], self._IX_Mde[0]] *= self._fail_mode.get_val()
+            return self
+        if self._fail_mode == FailMode.STABILITY_LOSS:
+            self._A[self._IX_Mw[1], self._IX_Mw[0]] *= self._fail_mode.get_val()
+            return self
+
+    def get_fail(self):
+        return self._fail_mode
+
 
 class LVAircraft(xsim.BaseModel):
 
@@ -110,6 +164,10 @@ class LVAircraft(xsim.BaseModel):
     IX_q = 3
     IX_dt = 0
     IX_de = 1
+
+    _IX_Mw  = [3, 1]
+    _IX_Xde = [1, 1]
+    _IX_Mde = [3, 1]
 
     def __init__(
             self,
@@ -126,6 +184,8 @@ class LVAircraft(xsim.BaseModel):
 
         # state
         self._x = np.zeros(4, dtype=self.dtype)
+        # fail
+        self._fail_mode = FailMode.NORMAL
 
         # env params
         # action space
@@ -143,6 +203,7 @@ class LVAircraft(xsim.BaseModel):
         return self._x
 
     def reset(self):
+        self._A, self._B = self.construct_matrices()
         self._x = np.zeros(4, dtype=self.dtype)
         return self.get_state()
 
@@ -177,3 +238,20 @@ class LVAircraft(xsim.BaseModel):
             [0,     -1.2394]    # q
         ], dtype=self.dtype)
         return A.T, B.T
+
+    def set_fail(self, mode, val=None):
+        if val is not None:
+            mode.set_val(val)
+        self._fail_mode = mode
+        if self._fail_mode == FailMode.NORMAL:
+            return self
+        if self._fail_mode == FailMode.GAIN_REDUCTION:
+            self._B[self._IX_Xde[1], self._IX_Xde[0]] *= self._fail_mode.get_val()
+            self._B[self._IX_Mde[1], self._IX_Mde[0]] *= self._fail_mode.get_val()
+            return self
+        if self._fail_mode == FailMode.STABILITY_LOSS:
+            self._A[self._IX_Mw[1], self._IX_Mw[0]] *= self._fail_mode.get_val()
+            return self
+
+    def get_fail(self):
+        return self._fail_mode
