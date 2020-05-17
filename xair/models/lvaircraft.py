@@ -240,6 +240,8 @@ class LVAircraft(xsim.BaseModel):
         return A.T, B.T
 
     def set_fail(self, mode, val=None):
+        if isinstance(mode, str):
+            mode = FailMode.get_mode(mode)
         if val is not None:
             mode.set_val(val)
         self._fail_mode = mode

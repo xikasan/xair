@@ -149,3 +149,22 @@ class LVAircraftPitchV2(LVAircraftPitchV1):
 
     def get_fail_mode(self):
         return self._model.get_fail()
+
+
+class LVAircraftPitchV3(LVAircraftPitchV2):
+
+    def __init__(
+            self,
+            *args,
+            fail_mode="normal",
+            fail_range=[0.2, 0.7],
+            **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.fail_mode = fail_mode
+        self.fail_range = fail_range
+
+    def set_fail(self):
+        fail_width = np.max(self.fail_range) - np.min(self.fail_range)
+        val = np.random.rand() * fail_width + np.min(self.fail_range)
+        self.set_fail_mode(self.fail_mode, val=val)
