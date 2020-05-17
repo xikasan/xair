@@ -21,3 +21,8 @@ register(
     id='LVAircraftPitch-v2',
     entry_point='xair.envs.lvaircraft_pitch:LVAircraftPitchV2'
 )
+# Filtered rectangle command + Monte Carlo Fail
+register(
+    id='LVAircraftPitch-v3',
+    entry_point='xair.envs.lvaircraft_pitch:LVAircraftPitchV3'
+)
