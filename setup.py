@@ -6,12 +6,12 @@ from setuptools import setup, find_packages
 with open('README.md') as f:
     readme = f.read()
 
-with open('LICENSE') as f:
+with open('LISENCE') as f:
     license = f.read()
 
 setup(
     name='xair',
-    version='0.1.1',
+    version='0.3.0',
     description="xikasan's aircraft simulation tool set",
     long_description=readme,
     author='xikasan',
