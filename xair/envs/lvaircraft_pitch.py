@@ -30,6 +30,8 @@ class LVAircraftPitchV0(BaseEnv):
         self.IX_T = 0
         self.IX_q = 1
         self.IX_C = 2
+        self.IX_dt = 0
+        self.IX_de = 1
 
         # command generator
         self.target_range = target_range
