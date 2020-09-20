@@ -11,7 +11,7 @@ with open('LISENCE') as f:
 
 setup(
     name='xair',
-    version='0.3.1',
+    version='0.3.2',
     description="xikasan's aircraft simulation tool set",
     long_description=readme,
     author='xikasan',
