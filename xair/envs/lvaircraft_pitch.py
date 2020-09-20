@@ -13,7 +13,7 @@ class LVAircraftPitchV0(BaseEnv):
     def __init__(
             self,
             dt,
-            range_target=xt.d2r([-10, 10]),
+            target_range=xt.d2r([-10, 10]),
             target_period=10.0,
             dtype=np.float32,
             name="LVAircraftPitchV0"
@@ -32,9 +32,9 @@ class LVAircraftPitchV0(BaseEnv):
         self.IX_C = 2
 
         # command generator
-        self.range_target = range_target
-        target_width = (np.max(range_target) - np.min(range_target)) / 2
-        target_center = np.sum(range_target) / 2
+        self.target_range = target_range
+        target_width = (np.max(target_range) - np.min(target_range)) / 2
+        target_center = np.sum(target_range) / 2
         self._ref = xsim.RectangularCommand(
             period=target_period,
             amplitude=target_width,
@@ -44,11 +44,11 @@ class LVAircraftPitchV0(BaseEnv):
         self.action_space = self.generate_space(self._model.act_low, self._model.act_high)
         self._obs_low = np.concatenate([
             self._model.obs_low[[self._model.IX_T, self._model.IX_q]],
-            [np.min(self.range_target)]
+            [np.min(self.target_range)]
         ])
         self._obs_high = np.concatenate([
             self._model.obs_high[[self._model.IX_T, self._model.IX_q]],
-            [np.max(self.range_target)]
+            [np.max(self.target_range)]
         ])
         self.observation_space = self.generate_space(self._obs_low, self._obs_high)
 
@@ -101,14 +101,14 @@ class LVAircraftPitchV1(LVAircraftPitchV0):
             self,
             dt,
             tau=1.0,
-            range_target=xt.d2r([-10, 10]),
+            target_range=xt.d2r([-10, 10]),
             target_period=10.0,
             dtype=np.float32,
-            name="LVAircraftPitchV0"
+            name="LVAircraftPitchV1"
     ):
         super().__init__(
             dt,
-            range_target=range_target,
+            target_range=target_range,
             target_period=target_period,
             dtype=dtype,
             name=name
@@ -141,8 +141,8 @@ class LVAircraftPitchV1(LVAircraftPitchV0):
 
 class LVAircraftPitchV2(LVAircraftPitchV1):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, name="LVAircraftPitchV2", **kwargs):
+        super().__init__(*args, name=name, **kwargs)
 
     def set_fail_mode(self, mode, val=None):
         self._model.set_fail(mode, val)
@@ -158,6 +158,7 @@ class LVAircraftPitchV3(LVAircraftPitchV2):
             *args,
             fail_mode="normal",
             fail_range=[0.2, 0.7],
+            name="LVAircraftPitchV2",
             **kwargs
     ):
         super().__init__(*args, **kwargs)
