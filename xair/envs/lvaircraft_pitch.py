@@ -176,10 +176,10 @@ class LVAircraftPitchV3(LVAircraftPitchV2):
             *args,
             fail_mode="normal",
             fail_range=[0.2, 0.7],
-            name="LVAircraftPitchV2",
+            name="LVAircraftPitchV3",
             **kwargs
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, name=name, **kwargs)
         self.fail_mode = fail_mode
         self.fail_range = fail_range
 
