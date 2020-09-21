@@ -90,11 +90,27 @@ class LVAircraftPitchV0(BaseEnv):
     def get_target(self):
         return self.get_observation()[self.IX_C]
 
+    @property
+    def target(self):
+        return self.get_target()
+
+    @property
+    def reference(self):
+        return  self.get_target()
+
     def get_state(self):
         return self.get_observation()[[self.IX_T, self.IX_q]]
 
+    @property
+    def state(self):
+        return self.get_state()
+
     def get_time(self):
         return self.current_time
+
+    @property
+    def time(self):
+        return self.get_time()
 
 
 class LVAircraftPitchV1(LVAircraftPitchV0):
