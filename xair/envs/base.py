@@ -19,7 +19,7 @@ class BaseEnv(gym.Env):
     def step(self, action):
         raise NotImplementedError()
 
-    def resset(self):
+    def reset(self):
         raise NotImplementedError()
 
     @cached_property
