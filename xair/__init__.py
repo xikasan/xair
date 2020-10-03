@@ -26,3 +26,8 @@ register(
     id='LVAircraftPitch-v3',
     entry_point='xair.envs.lvaircraft_pitch:LVAircraftPitchV3'
 )
+# Filtered random Poisson rectangle command + Monte Carlo Fail
+register(
+    id='LVAircraftPitch-v4',
+    entry_point='xair.envs.lvaircraft_random_pitch:LVAircraftPitchV4'
+)

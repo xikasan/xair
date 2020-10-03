@@ -19,7 +19,7 @@ class BaseEnv(gym.Env):
     def step(self, action):
         raise NotImplementedError()
 
-    def resset(self):
+    def reset(self):
         raise NotImplementedError()
 
     @cached_property
@@ -37,3 +37,10 @@ class BaseEnv(gym.Env):
 
     def clip_action(self, action):
         return np.clip(action, self._act_low, self._act_high)
+
+    def get_observation(self):
+        raise NotImplementedError()
+
+    @property
+    def observation(self):
+        return self.get_observation()
