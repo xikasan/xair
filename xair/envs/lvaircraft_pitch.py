@@ -96,7 +96,7 @@ class LVAircraftPitchV0(BaseEnv):
 
     @property
     def reference(self):
-        return  self.get_target()
+        return self.get_target()
 
     def get_state(self):
         return self.get_observation()[[self.IX_T, self.IX_q]]

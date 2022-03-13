@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from xair.models.lvaircraft import *
+from xair.models.multicopter import *
 
 from gym.envs.registration import register
 
@@ -30,4 +31,12 @@ register(
 register(
     id='LVAircraftPitch-v4',
     entry_point='xair.envs.lvaircraft_random_pitch:LVAircraftPitchV4'
+)
+
+# =============================================================================
+# simple multicopter position controls
+# Fixed position target
+register(
+    id='SMulticopterPosition2D-v0',
+    entry_point='xair.envs.smulticopter_position:SMulticopterPosition2DV0'
 )
